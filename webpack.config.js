@@ -1,67 +1,83 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+//const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = {
-    mode: 'development',
 
-    optimization: {
-        minimizer: [new OptimizeCssAssetsPlugin()]
-    },
+	mode: 'development',
 
-    module: {
-        rules: [{
-                test: /\.css$/,
-                exclude: /styles\.css$/,
-                use: [
-                    'style-loader',
-                    'css-loader'
-                ]
-            },
-            {
-                test: /styles\.css$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader'
-                ]
-            },
-            {
-                test: /\.html$/i,
+	output:{
+		clean:true
+	},
+
+	module: {
+
+		// RULES
+
+        rules:[
+
+			{
+                test: /\.html$/i, //
                 loader: 'html-loader',
                 options: {
-                    attributes: false,
+                    sources: false,
                     minimize: false
                 },
             },
-            {
+
+
+
+			{
+                test: /\.css$/,
+                exclude: /styles\.css$/,
+                use: ['style-loader', 'css-loader']
+            },
+
+
+
+			{
+				test: /styles.css$/,
+				use: [MiniCssExtractPlugin.loader, 'css-loader']
+
+			},
+
+
+
+			{
                 test: /\.(png|svg|jpg|gif)$/,
                 use: [{
                     loader: 'file-loader',
                     options: {
                         esModule: false,
-                        name: 'assets/[name].[ext]'
+                        name: 'assets/img/[name].[ext]'
                     }
                 }]
-            }
-        ]
-    },
-    plugins: [
+			}
+
+		]
+	},
+
+
+	// PLUGINS
+
+	plugins: [
         new HtmlWebPackPlugin({
-            template: './src/index.html',
-            filename: './index.html'
+			//title:'Ahi lo llevas', // no funciona!!
+            //filename: './index.html',
+			//inject: 'body'  //--> o script JS quearía dentro do body en ves de no <head>
+        	template: './src/index.html',
         }),
-        new MiniCssExtractPlugin({
-            filename: '[name].css',
+		new MiniCssExtractPlugin({
+            filename: '[name].css', // ou por exemplo se queres que ao compilar lle o nome  'nuevosestilo.css' 
             ignoreOrder: false
         }),
-        new CopyPlugin({
+		new CopyPlugin({
             patterns: [
-                { from: 'src/assets', to: 'assets/' },
-            ],
+				//{ from: "other", to: "public" },
+                { from: 'src/assets', to: 'assets/' }
+			]
         }),
-
-
     ]
 
 }

@@ -1,89 +1,105 @@
+// jao!
+// En cuanto entraron....
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+
 const CopyPlugin = require('copy-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-    mode: 'production',
 
-    optimization: {
-        minimizer: [new OptimizeCssAssetsPlugin(), new TerserPlugin()]
-    },
+	mode: 'production',
 
-    output: {
-        filename: 'main.[contentHash].js'
-    },
+	output:{
+		clean : true,
+		filename :'main.[contenthash].js'
+	},
+	
+	optimization:{
+		minimize: true, 
+		minimizer:[new CssMinimizerPlugin(), new TerserPlugin()]
+	},
 
-    module: {
-        rules: [
+	module: {
 
-            {
-                test: /\.m?js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: ['@babel/preset-env']
-                    }
+		// RULES
 
-                }
-            },
+        rules:[
 
-
-            {
-                test: /\.css$/,
-                exclude: /styles\.css$/,
-                use: [
-                    'style-loader',
-                    'css-loader'
-                ]
-            },
-            {
-                test: /styles\.css$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader'
-                ]
-            },
-            {
-                test: /\.html$/i,
+			{
+                test: /\.html$/i, //
                 loader: 'html-loader',
                 options: {
-                    attributes: false,
+                    sources: false,
                     minimize: false
                 },
             },
-            {
+
+
+
+			{
+                test: /\.css$/,
+                exclude: /styles\.css$/,
+                use: ['style-loader', 'css-loader']
+            },
+
+
+
+			{
+				test: /styles.css$/,
+				use: [MiniCssExtractPlugin.loader, 'css-loader']
+
+			},
+
+
+
+			{
                 test: /\.(png|svg|jpg|gif)$/,
                 use: [{
                     loader: 'file-loader',
                     options: {
                         esModule: false,
-                        name: 'assets/[name].[ext]'
+                        name: 'assets/img/[name].[ext]'
                     }
                 }]
-            }
-        ]
-    },
-    plugins: [
+			},
+
+			{
+				test: /\.m?js$/,
+				exclude: /node_modules/,
+				use: {
+				  loader: "babel-loader",
+				  options: {
+					presets: ['@babel/preset-env']
+				  }
+				}
+			  }
+
+		]
+	},
+
+
+
+	// PLUGINS
+
+	plugins: [
         new HtmlWebPackPlugin({
-            template: './src/index.html',
-            filename: './index.html'
+			//title:'Ahi lo llevas', // no funciona!!
+            //filename: './index.html',
+			//inject: 'body'  //--> o script JS quearía dentro do body en ves de no <head>
+        	template: './src/index.html',
         }),
-        new MiniCssExtractPlugin({
-            filename: '[name][contentHash].css',
+		new MiniCssExtractPlugin({
+            filename: '[name].[fullhash].css', // ou por exemplo se queres que ao compilar lle o nome  'nuevosestilo.css' 
             ignoreOrder: false
         }),
-        new CopyPlugin({
+		new CopyPlugin({
             patterns: [
-                { from: 'src/assets', to: 'assets/' },
-            ],
+				//{ from: "other", to: "public" },
+                { from: 'src/assets', to: 'assets/' }
+			]
         }),
-        new CleanWebpackPlugin(),
-
-
     ]
 
 }

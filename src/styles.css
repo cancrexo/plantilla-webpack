@@ -1,5 +1,11 @@
 html,
 body {
     background: #ccc;
-    color: #00c;
+    color: #000;
+}
+img{
+	display:block;
+	width:300px;
+	height:auto;
+	margin: 30px auto;
 }
